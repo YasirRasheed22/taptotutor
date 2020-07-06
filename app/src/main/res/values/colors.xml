@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#000000</color>
+    <color name="colorPrimaryDark">#FFA000</color>
+    <color name="backgroundcolor">#fcfcfc</color>
+    <color name="greylight">#ededed</color>
+    <color name="Deeppurple">#7c4dff</color>
+    <color name="materialyellow">#ffb300</color>
+    <color name="pinkacent">#ff4081</color>
+    <color name="pine">#0026FF</color>
+</resources>

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">First Project</string>
+    <string name="male">Male</string>
+    <string name="sign_up">Sign Up</string>
+    <string name="email">Email</string>
+    <string name="full_name">Full Name</string>
+    <string name="cl">Class</string>
+    <string name="address">Address</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="password">Password</string>
+
+</resources>

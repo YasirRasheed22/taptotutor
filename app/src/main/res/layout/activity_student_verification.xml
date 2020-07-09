@@ -126,9 +126,10 @@
         android:layout_width="150dp"
         android:layout_height="70dp"
         android:layout_gravity="center"
+        android:textColor="#fff"
         android:layout_marginTop="45dp"
         android:background="@drawable/myprofilebutton"
-        android:text="Save" />
+        android:text="Next" />
 
     <ProgressBar
         android:id="@+id/saveprocess"

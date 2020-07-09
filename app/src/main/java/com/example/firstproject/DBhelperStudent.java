@@ -1,24 +1,26 @@
 package com.example.firstproject;
 
 public class DBhelperStudent {
-    public String Gender;
-    public String Email;
-    public String Phonenumber;
-    public String studentClass;
+    public String ProfileImage;
+    public String FullName;
+    public String StudentClass;
     public String Address;
-    public String Studentname;
+    public String Phonenumber;
+    public String Email;
+    public String Gender;
 
     public DBhelperStudent() {
     }
 
-    public DBhelperStudent(String gender, String email, String phonenumber, String studentClass, String address, String studentname) {
-
-        Gender = gender;
-        Email = email;
-        Phonenumber = phonenumber;
-        this.studentClass = studentClass;
+    public DBhelperStudent(String profileImage, String fullName, String studentClass, String address, String phonenumber, String email, String gender) {
+        ProfileImage = profileImage;
+        FullName = fullName;
+        StudentClass = studentClass;
         Address = address;
-        Studentname = studentname;
+        Phonenumber = phonenumber;
+        Email = email;
+        Gender = gender;
     }
+
 
 }

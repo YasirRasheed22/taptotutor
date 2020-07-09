@@ -25,7 +25,8 @@
         android:layout_gravity="center"
         android:background="@drawable/myprofilebutton"
         android:text="Student"
-        android:textSize="20sp" />
+        android:textSize="20sp"
+        android:textColor="#FFFFFF"/>
 </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
@@ -39,7 +40,7 @@
         android:layout_marginTop="20dp"
         android:text="Tutor"
         android:textSize="20sp"
-
+  android:textColor="#ffffff"
         android:background="@drawable/myprofilebutton"
         />
     </LinearLayout>

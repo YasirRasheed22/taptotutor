@@ -69,6 +69,7 @@ public class TutorSignUp extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+
                             //send verification email
                             FirebaseUser user = fAuth.getCurrentUser();
                             user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -77,6 +78,7 @@ public class TutorSignUp extends AppCompatActivity {
                                     Toast.makeText(TutorSignUp.this, "Verification Email Has Been Sent", Toast.LENGTH_SHORT).show();
                                 }
                             });
+
                             DBheplerTutor tutor = new DBheplerTutor( email, Gender, phonenumber);
 
                             FirebaseDatabase.getInstance().getReference("Tutor").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(tutor).addOnCompleteListener(new OnCompleteListener<Void>() {

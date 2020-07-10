@@ -30,10 +30,20 @@
             android:layout_height="120dp"
             android:layout_gravity="center"
             android:layout_marginTop="30dp"
-            android:onClick="SelectImageFromGallery">
+            android:background="@drawable/iconimage">
+
 
         </de.hdodenhof.circleimageview.CircleImageView>
-
+       <TextView
+           android:layout_width="wrap_content"
+           android:id="@+id/imagetext"
+           android:layout_height="wrap_content"
+           android:text="SelectImage"
+           android:layout_gravity="center"
+           android:textSize="20dp"
+           android:layout_marginTop="-30dp"
+           android:visibility="visible"
+           />
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -119,13 +129,14 @@
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
+
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/RegisterStudentPassword"
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:passwordToggleEnabled="true"
-                android:hint="Password">
+                android:hint="Password"
+                app:passwordToggleEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
@@ -135,57 +146,66 @@
                     />
 
             </com.google.android.material.textfield.TextInputLayout>
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Gender"
                 android:layout_marginTop="10dp"
-                android:textSize="20dp"/>
+                android:text="Gender"
+                android:textSize="20dp" />
+
             <RadioGroup
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_marginTop="10dp"
-                >
+                android:orientation="horizontal">
+
                 <RadioButton
+                    android:id="@+id/malestudent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Male"
-                    android:id="@+id/malestudent"
 
                     />
+
                 <RadioButton
+                    android:id="@+id/femalestudent"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Female"
-                    android:id="@+id/femalestudent"
                     android:layout_marginLeft="20dp"
+                    android:text="Female"
 
                     />
 
             </RadioGroup>
 
             <Button
-                android:layout_width="140dp"
                 android:id="@+id/registerstudent"
+                android:layout_width="140dp"
                 android:layout_height="50dp"
-                android:text="Sign Up"
-           android:layout_marginTop="30dp"
-                android:textColor="#fff"
+                android:layout_gravity="center"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/myprofilebutton"
-                android:layout_gravity="center"/>
+                android:text="Sign Up"
+                android:textColor="#fff" />
+
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already Register? Click Here"
                 android:layout_gravity="center"
                 android:layout_marginTop="10dp"
                 android:onClick="movetologin"
-                />
-
+                android:text="Already Register? Click Here" />
 
 
         </LinearLayout>
+        <ProgressBar
+            android:id="@+id/reg_progress"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            />
     </LinearLayout>
 
 </ScrollView>

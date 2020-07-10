@@ -19,10 +19,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 public class StudentDashboard extends AppCompatActivity {
     TextView textView, textView1, textView2;
-    ImageView image;
+    ImageView imageView;
     FirebaseAuth fAuth;
     FirebaseDatabase firebaseDatabase;
     DatabaseReference databaseReference;
@@ -32,30 +33,25 @@ public class StudentDashboard extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_dashboard);
-        image = findViewById(R.id.dashboardimage);
+        imageView = findViewById(R.id.dashboardimage);
         textView = findViewById(R.id.nametext);
         textView1 = findViewById(R.id.gmailtext);
 
         fAuth = FirebaseAuth.getInstance();
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = FirebaseDatabase.getInstance().getReference("Student").child(fAuth.getCurrentUser().getUid());
-
-        FirebaseUser user = fAuth.getCurrentUser();
-        if (user!=null){
-        if(user.getPhotoUrl()!=null) {
-        Glide.with(this).load(user.getPhotoUrl().toString()).into(image);
-        }
-        }
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+
                 String studentemail = dataSnapshot.child("Email").getValue().toString();
-                String studentname = dataSnapshot.child("Studentname").getValue().toString();
-
+                String studentname = dataSnapshot.child("FullName").getValue().toString();
+                String image = dataSnapshot.child("ProfileImage").getValue().toString();
                 textView.setText(studentname);
-               textView1.setText(studentemail);
+                textView1.setText(studentemail);
+                    Glide.with(StudentDashboard.this).load(image).into(imageView);
+                }
 
-            }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {

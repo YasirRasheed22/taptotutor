@@ -13,6 +13,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -44,8 +45,10 @@ public class StudentSignup extends AppCompatActivity {
     FirebaseAuth mAuth;
     String PicUrl;
     RadioButton male, female;
-
+    TextView Text;
+    ProgressBar progressBar;
     String gender;
+    String imageurl;
 
     Uri uri;
 
@@ -61,8 +64,10 @@ public class StudentSignup extends AppCompatActivity {
         reg_password = findViewById(R.id.RegisterStudentPassword);
         imageView = findViewById(R.id.studentimage);
         StudentRegisterBtn = findViewById(R.id.registerstudent);
+        progressBar = findViewById(R.id.reg_progress);
         male = findViewById(R.id.malestudent);
         female = findViewById(R.id.femalestudent);
+        Text = findViewById(R.id.imagetext);
         mAuth = FirebaseAuth.getInstance();
 
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -71,6 +76,7 @@ public class StudentSignup extends AppCompatActivity {
                 showimagechooser();
                 saveuserinfo();
                 uploadimagetofirebasestorage();
+                Text.setVisibility(View.GONE);
 
             }
         });
@@ -79,11 +85,11 @@ public class StudentSignup extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 validationofvalues();
+
             }
         });
 
     }
-
 
 
     private void saveuserinfo() {
@@ -96,6 +102,7 @@ public class StudentSignup extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {
                         Toast.makeText(StudentSignup.this, "Pic url save", Toast.LENGTH_SHORT).show();
+
                     }
                 }
             });
@@ -124,9 +131,11 @@ public class StudentSignup extends AppCompatActivity {
             profileimageref.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
                 public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    PicUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
-
+                    Task<Uri> uriTask = taskSnapshot.getStorage().getDownloadUrl();
+                     while (!uriTask.isComplete());
+                     Uri urlimage = uriTask.getResult();
+                     imageurl = urlimage.toString();
+                    Toast.makeText(StudentSignup.this, "Image Uploaded", Toast.LENGTH_SHORT).show();
 
                 }
             });
@@ -140,11 +149,12 @@ public class StudentSignup extends AppCompatActivity {
         startActivityForResult(Intent.createChooser(intent, "Select Profile Image"), CHOOSE_IMAGE);
 
     }
-    public void validationofvalues(){
+
+    public void validationofvalues() {
         final String email = reg_email.getEditText().getText().toString().trim();
         String password = reg_password.getEditText().getText().toString().trim();
         final String phonenumber = reg_phonenumber.getEditText().getText().toString().trim();
-        final String Address = reg_address.getEditText().getText().toString().trim();
+        final String address = reg_address.getEditText().getText().toString().trim();
         final String Fullname = reg_fullname.getEditText().getText().toString().trim();
         final String studentclass = reg_class.getEditText().getText().toString().trim();
 
@@ -156,59 +166,78 @@ public class StudentSignup extends AppCompatActivity {
         }
         if (TextUtils.isEmpty(password)) {
             reg_password.setError("Password is Required");
-            reg_password.requestFocus();
+
         }
         if (password.length() < 6) {
             reg_password.setError("Password must be greater than 6 letters");
         }
         if (TextUtils.isEmpty(phonenumber)) {
             reg_phonenumber.setError("Phone Number Is Required");
-            reg_phonenumber.requestFocus();
+
         }
-        if (TextUtils.isEmpty(Address)) {
+        if (TextUtils.isEmpty(address)) {
             reg_address.setError("Address Is Required");
-            reg_address.requestFocus();
+
         }
         if (TextUtils.isEmpty(Fullname)) {
             reg_fullname.setError("FullName Is Required");
-            reg_fullname.requestFocus();
         }
         if (TextUtils.isEmpty(studentclass)) {
             reg_class.setError("Class Is Required");
-            reg_class.requestFocus();
         }
-        if (male.isChecked()){
-            gender ="Male";
+        if (male.isChecked()) {
+            gender = "Male";
         }
-        if (female.isChecked()){
-            gender ="Female";
+        if (female.isChecked()) {
+            gender = "Female";
         }
         mAuth = FirebaseAuth.getInstance();
-        mAuth.createUserWithEmailAndPassword(email,password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+
+        mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
-                if (task.isSuccessful()){
+                progressBar.setVisibility(View.VISIBLE);
+                if (task.isSuccessful()) {
                     Toast.makeText(StudentSignup.this, "Create Kaar Leta", Toast.LENGTH_SHORT).show();
-                }
-                if(task.isSuccessful()){
                     FirebaseUser user = mAuth.getCurrentUser();
-                    user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
+                    user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
-                        public void onSuccess(Void aVoid) {
-                            Toast.makeText(StudentSignup.this, "Verification Email Has Been Sent", Toast.LENGTH_SHORT).show();
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(StudentSignup.this, "Verification Email Has Been Sent....Check Your Inbox", Toast.LENGTH_SHORT).show();
                         }
                     });
 
+                    DBhelperStudent student = new DBhelperStudent(imageurl, Fullname, studentclass, address, phonenumber, email, gender);
+                    FirebaseDatabase.getInstance().getReference("Student").child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(student).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(StudentSignup.this, "Values Inserted", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(StudentSignup.this, StudentLogin.class);
+                                startActivity(intent);
+                                finish();
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        }
+                    });
+                } else {
+                    if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                        Toast.makeText(getApplicationContext(), "You are Already Register", Toast.LENGTH_SHORT).show();
+                        progressBar.setVisibility(View.GONE);
+                    } else {
+                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-        });
 
+        });
 
 
     }
 
     public void movetologin(View view) {
         Intent intent = new Intent(this, StudentLogin.class);
+        startActivity(intent);
         finish();
     }
 }

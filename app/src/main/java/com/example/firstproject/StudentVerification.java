@@ -36,129 +36,52 @@ import com.google.firebase.storage.UploadTask;
 import java.io.IOException;
 
 public class StudentVerification extends AppCompatActivity {
-    TextInputLayout sdisplayname;
-    private static final int CHOOSE_IMAGE = 101;
-    TextView textView, textView2;
-    ImageView imageView;
-    Button savebtn, resend;
-    Uri uriprofileimage;
-    FirebaseAuth fAuth;
-    String Profileimageurl;
-    ProgressBar progressBar, progressBar2;
+    Button ResendEmail, NextButton;
+    ProgressBar progressBar;
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_verification);
-        fAuth = FirebaseAuth.getInstance();
-        imageView = findViewById(R.id.profileimagechoose);
-        progressBar = findViewById(R.id.imageprogress);
-        progressBar2 = findViewById(R.id.saveprocess);
-        textView = findViewById(R.id.text1);
-        textView2 = findViewById(R.id.emailverification);
-        resend = findViewById(R.id.resendemail);
-        textView.setVisibility(View.VISIBLE);
-        imageView.setVisibility(View.VISIBLE);
-        final FirebaseUser user = fAuth.getCurrentUser();
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-
+        ResendEmail = findViewById(R.id.verificationemail);
+        NextButton = findViewById(R.id.nextbutton);
+        progressBar = findViewById(R.id.ver_progress);
+        mAuth = FirebaseAuth.getInstance();
+        final FirebaseUser user = mAuth.getCurrentUser();
+        ResendEmail.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                showimagechooser();
-            }
-        });
-        findViewById(R.id.savepic).setOnClickListener(new View.OnClickListener() {
-            @Override
-
-            public void onClick(View v) {
-                progressBar2.setVisibility(View.VISIBLE);
-                if (!user.isEmailVerified()) {
-                    textView2.setVisibility(View.VISIBLE);
-                    resend.setVisibility(View.VISIBLE);
-                    Toast.makeText(StudentVerification.this, "You Have To Verify Email For Futher Process", Toast.LENGTH_SHORT).show();
-                    progressBar2.setVisibility(View.GONE);
-                    resend.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(final View v) {
-                            user.sendEmailVerification().addOnSuccessListener(new OnSuccessListener<Void>() {
-                                @Override
-                                public void onSuccess(Void aVoid) {
-                                    Toast.makeText(StudentVerification.this, "Verification Email Has Been Sent", Toast.LENGTH_SHORT).show();
-                                }
-                            });
-                        }
-                    });
-                }
-                if (user.isEmailVerified()) {
-                   uploadimagetofirebasestorage();
-                   saveuserinfo();
-                 startActivity(new Intent(StudentVerification.this,StudentDashboard.class));
-                 finish();
-                }
-
-            }
-
-        });
-
-
-    }
-
-    private void saveuserinfo() {
-        FirebaseUser user = fAuth.getCurrentUser();
-        if (user !=null && Profileimageurl !=null){
-
-            UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder().setPhotoUri(Uri.parse(Profileimageurl)).build();
-            user.updateProfile(profile).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()){
-
-                        Toast.makeText(StudentVerification.this, "Pic url save", Toast.LENGTH_SHORT).show();
+                user.sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        Toast.makeText(StudentVerification.this, "Verification Email Has Been Sent....Check Your Inbox", Toast.LENGTH_SHORT).show();
                     }
-                }
-            });
-        }
-    }
+                });
+            }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-         if (requestCode == CHOOSE_IMAGE && resultCode == RESULT_OK && data !=null && data.getData() !=null){
-             uriprofileimage = data.getData();
-             try {
-                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(),uriprofileimage);
-                imageView.setImageBitmap(bitmap);
-                uploadimagetofirebasestorage();
-             } catch (IOException e) {
-                 e.printStackTrace();
-             }
-         }
-    }
+        });
 
-    private void uploadimagetofirebasestorage() {
-        progressBar.setVisibility(View.VISIBLE);
-        final StorageReference profileimageref = FirebaseStorage.getInstance().getReference("StudentProfilePics/"+System.currentTimeMillis() + "jpg");
-        if(uriprofileimage !=null){
-            profileimageref.putFile(uriprofileimage).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                    progressBar.setVisibility(View.GONE);
-                    textView.setText("Image Selected");
-               Profileimageurl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-
-                }
-            });
-        }
-    }
-
-    private void showimagechooser() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent,"Select Profile Image"),CHOOSE_IMAGE);
-
+        NextButton.setOnClickListener(new View.OnClickListener() {
+                                          @Override
+                                          public void onClick(View v) {
+                                              progressBar.setVisibility(View.VISIBLE);
+                                             if (!user.isEmailVerified()){
+                                                 Toast.makeText(StudentVerification.this, "You Have To Verify The Email Address For Futher Process", Toast.LENGTH_SHORT).show();
+                                                 progressBar.setVisibility(View.GONE);
+                                             }
+                                             if (user.isEmailVerified()){
+                                                progressBar.setVisibility(View.VISIBLE);
+                                                 Toast.makeText(StudentVerification.this, "Welcome to Dashboard", Toast.LENGTH_SHORT).show();
+                                              Intent intent= new Intent(StudentVerification.this,StudentDashboard.class);
+                                              startActivity(intent);
+                                              finish();
+                                              progressBar.setVisibility(View.GONE);
+                                             }
+                                          }
+                                      }
+        );
     }
 
 }

@@ -53,9 +53,9 @@ public class StudentMyProfile extends AppCompatActivity {
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String name = dataSnapshot.child("Studentname").getValue().toString();
+                String name = dataSnapshot.child("FullName").getValue().toString();
                 String studentemail = dataSnapshot.child("Email").getValue().toString();
-                String studentclass = dataSnapshot.child("studentClass").getValue().toString();
+                String studentclass = dataSnapshot.child("StudentClass").getValue().toString();
                 String studentaddress = dataSnapshot.child("Address").getValue().toString();
                 String phno= dataSnapshot.child("Phonenumber").getValue().toString();
                 String studentgender= dataSnapshot.child("Gender").getValue().toString();
